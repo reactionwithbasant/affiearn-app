@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AffiEarn - RAGHVITA ENTERPRISES</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --saffron: #FF9933; --green: #138808; --navy: #000080; }
+        body { background: #f8fafc; min-height: 100vh; font-family: sans-serif; margin-bottom: 80px; }
+        .glass { background: white; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        .hidden { display: none !important; }
+        .nav-active { color: var(--saffron) !important; border-top: 3px solid var(--saffron); }
+        .input-field { border: 1px solid #e2e8f0; border-radius: 15px; padding: 12px; width: 100%; outline: none; background: #fff; }
+        .input-field:focus { border-color: var(--saffron); }
+    </style>
+</head>
+<body>
+
+    <div id="auth-section">
+        <div class="max-w-md mx-auto p-6 pt-10">
+            <div class="glass p-8 border-t-8 border-[#FF9933]">
+                <div class="text-center mb-8">
+                    <h1 class="text-4xl font-black text-[#000080]">AffiEarn</h1>
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Powered by RAGHVITA ENTERPRISES</p>
+                </div>
+                <div id="signup-box">
+                    <input type="text" id="s-name" placeholder="Pura Naam" class="input-field mb-3">
+                    <input type="email" id="s-email" placeholder="Email ID" class="input-field mb-3">
+                    <input type="password" id="s-pass" placeholder="Password" class="input-field mb-3">
+                    <button onclick="handleRegister()" class="w-full bg-[#FF9933] text-white p-4 rounded-xl font-bold mt-4 shadow-lg active:scale-95 transition">REGISTER NOW</button>
+                    <p class="mt-4 text-xs text-center text-gray-500">Member hain? <button onclick="toggleAuth('login')" class="text-blue-700 font-bold">Login</button></p>
+                </div>
+                <div id="login-box" class="hidden">
+                    <input type="email" id="l-email" placeholder="Email" class="input-field mb-3">
+                    <input type="password" id="l-pass" placeholder="Password" class="input-field mb-3">
+                    <button onclick="handleLogin()" class="w-full bg-[#138808] text-white p-4 rounded-xl font-bold mt-4 shadow-lg active:scale-95 transition">LOGIN</button>
+                    <p class="mt-4 text-xs text-center text-gray-500">Naya account? <button onclick="toggleAuth('signup')" class="text-orange-600 font-bold">Register</button></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-content" class="hidden">
+        <header class="bg-white p-4 flex justify-between items-center shadow-sm sticky top-0 z-50">
+            <h2 class="text-xl font-black text-[#000080]">AffiEarn</h2>
+            <div class="bg-green-100 px-4 py-1 rounded-full border border-green-200">
+                <span id="wallet-amt" class="font-bold text-green-700 text-lg">₹0</span>
+            </div>
+        </header>
+
+        <main class="max-w-md mx-auto p-4">
+            <div id="tab-home" class="tab-page">
+                <div class="glass p-6 mt-4 border-l-8 border-orange-500">
+                    <h3 class="font-bold text-gray-700 mb-2">Link Convert Karein</h3>
+                    <input type="text" id="raw-url" placeholder="Paste Amazon/Myntra/Noise/Oppo link" class="input-field mb-4 bg-gray-50 text-sm">
+                    <button onclick="generateLink()" class="w-full bg-[#b06a14] text-white p-4 rounded-xl font-bold shadow-md active:scale-95 transition">CONVERT TO PROFIT</button>
+                    
+                    <div id="result-box" class="hidden mt-6 p-4 bg-green-50 rounded-xl border border-green-200 text-center">
+                        <input type="text" id="f-link" readonly class="w-full p-2 bg-white border rounded text-[10px] mb-3 font-mono outline-none">
+                        <button onclick="copyToClipboard()" class="w-full bg-[#138808] text-white py-3 rounded-xl text-sm font-bold shadow-md">COPY PROFIT LINK</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-reports" class="tab-page hidden">
+                <h3 class="font-bold text-[#000080] mb-4 uppercase text-xs tracking-widest">Earnings Report</h3>
+                <div class="grid grid-cols-3 gap-2 mb-6">
+                    <div class="glass p-3 bg-orange-50 text-center"><p class="text-[8px] text-gray-500 font-bold uppercase">Clicks</p><h4 id="total-clicks" class="font-black text-orange-600 text-lg">0</h4></div>
+                    <div class="glass p-3 bg-blue-50 text-center"><p class="text-[8px] text-gray-500 font-bold uppercase">Sales</p><h4 id="total-sales" class="font-black text-blue-600 text-lg">₹0</h4></div>
+                    <div class="glass p-3 bg-green-50 text-center"><p class="text-[8px] text-gray-500 font-bold uppercase">Profit</p><h4 id="total-profit-stats" class="font-black text-green-600 text-lg">₹0</h4></div>
+                </div>
+                <div id="reports-list" class="space-y-4 pb-10"></div>
+            </div>
+
+            <div id="tab-wallet" class="tab-page hidden pt-6 text-center">
+                <div class="glass p-8">
+                    <p class="text-gray-400 text-xs font-bold uppercase">Wallet Balance</p>
+                    <h2 id="w-total" class="text-5xl font-black text-green-600 my-2">₹0</h2>
+                    <div class="mt-8 border-t pt-6 text-left">
+                        <input type="text" id="upi-id" placeholder="example@upi" class="input-field mb-4">
+                        <button onclick="requestWithdraw()" class="w-full bg-orange-500 text-white p-4 rounded-xl font-bold shadow-lg">WITHDRAW REQUEST</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-profile" class="tab-page hidden">
+                <div class="glass p-6 mt-4 text-center">
+                    <div class="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl font-bold text-orange-600 shadow-inner" id="p-init">?</div>
+                    <h4 id="u-name-display" class="font-bold text-xl text-[#000080]">User</h4>
+                    <p id="u-email-display" class="text-xs text-gray-400 mb-6">---</p>
+                    <button onclick="auth.signOut().then(()=>location.reload())" class="w-full p-4 text-red-600 font-bold border border-red-100 rounded-xl hover:bg-red-50 transition">LOGOUT</button>
+                </div>
+            </div>
+        </main>
+
+        <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around py-3 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50">
+            <button onclick="nav('home', this)" class="nav-item nav-active flex flex-col items-center flex-1 transition"><i class="fa fa-home"></i><span class="text-[9px] font-bold mt-1">HOME</span></button>
+            <button onclick="nav('reports', this)" class="nav-item flex flex-col items-center flex-1 transition"><i class="fa fa-chart-bar"></i><span class="text-[9px] font-bold mt-1">REPORTS</span></button>
+            <button onclick="nav('wallet', this)" class="nav-item flex flex-col items-center flex-1 transition"><i class="fa fa-wallet"></i><span class="text-[9px] font-bold mt-1">WALLET</span></button>
+            <button onclick="nav('profile', this)" class="nav-item flex flex-col items-center flex-1 transition"><i class="fa fa-user"></i><span class="text-[9px] font-bold mt-1">PROFILE</span></button>
+        </nav>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiJACb1vNaH01GjHwVc9sA6BVab8iFA0A",
+            authDomain: "affiearn-ad591.firebaseapp.com",
+            projectId: "affiearn-ad591",
+            storageBucket: "affiearn-ad591.firebasestorage.app",
+            messagingSenderId: "108555316077",
+            appId: "1:108555316077:web:8093633724e6cf7d778864"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const vConfig = { pubId: "126949", campaigns: { "noise": "10320", "myntra": "10882", "oppo": "10644", "default": "10882" } };
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('auth-section').classList.add('hidden');
+                document.getElementById('app-content').classList.remove('hidden');
+                db.collection("users").doc(user.uid).onSnapshot(doc => {
+                    if(doc.exists) {
+                        const d = doc.data();
+                        document.getElementById('u-name-display').innerText = d.name || "User";
+                        document.getElementById('u-email-display').innerText = d.email || "";
+                        document.getElementById('p-init').innerText = (d.name ? d.name[0] : "U").toUpperCase();
+                        
+                        // NaN Protection for Wallet
+                        const bal = Number(d.wallet) || 0;
+                        document.getElementById('wallet-amt').innerText = "₹" + bal;
+                        document.getElementById('w-total').innerText = "₹" + bal;
+                    }
+                });
+                loadReports(user.uid);
+            }
+        });
+
+        async function generateLink() {
+            const url = document.getElementById('raw-url').value.toLowerCase();
+            if(!url) return alert("Link paste karein!");
+            
+            let cId = vConfig.campaigns.default;
+            let brand = "STORE";
+            if(url.includes("noise")) { cId = vConfig.campaigns.noise; brand = "NOISE"; }
+            else if(url.includes("myntra")) { cId = vConfig.campaigns.myntra; brand = "MYNTRA"; }
+            else if(url.includes("oppo")) { cId = vConfig.campaigns.oppo; brand = "OPPO"; }
+
+            // vCommission Link with P1 UID Tracking
+            const flink = `https://track.vcommission.com/click?campaign_id=${cId}&pub_id=${vConfig.pubId}&p1=${auth.currentUser.uid}&url=${encodeURIComponent(url)}`;
+            
+            await db.collection("reports").add({
+                uid: auth.currentUser.uid,
+                brand: brand,
+                link: flink,
+                date: new Date().toLocaleDateString(),
+                status: "Pending",
+                clicks: 0, sale_amount: 0, profit: 0
+            });
+
+            document.getElementById('f-link').value = flink;
+            document.getElementById('result-box').classList.remove('hidden');
+        }
+
+        function loadReports(uid) {
+            db.collection("reports").where("uid", "==", uid).onSnapshot(snap => {
+                const list = document.getElementById('reports-list');
+                list.innerHTML = "";
+                let tc = 0, ts = 0, tp = 0;
+
+                if (snap.empty) {
+                    list.innerHTML = "<p class='text-center py-10 text-gray-400 text-xs font-bold uppercase'>No Reports Yet</p>";
+                }
+
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    // FORCE NUMBER CONVERSION TO PREVENT NaN
+                    const c = Number(d.clicks) || 0;
+                    const s = Number(d.sale_amount) || 0;
+                    const p = Number(d.profit) || 0;
+
+                    tc += c; ts += s; tp += p;
+
+                    list.innerHTML += `
+                    <div class="glass p-4 border-l-4 border-blue-600 mb-4 shadow-sm animate-in fade-in">
+                        <div class="flex justify-between text-[9px] mb-2 font-bold">
+                            <span class="text-gray-400 uppercase">${d.date}</span>
+                            <span class="text-blue-600 uppercase">${d.status || 'Pending'}</span>
+                        </div>
+                        <h5 class="font-bold text-sm text-gray-800 mb-2">${d.brand}</h5>
+                        <div class="grid grid-cols-3 gap-1 py-2 border-y border-dashed text-center bg-gray-50 rounded">
+                            <div><p class="text-[8px] text-gray-400">CLICKS</p><b class="text-xs">${c}</b></div>
+                            <div><p class="text-[8px] text-gray-400">SALE</p><b class="text-xs text-blue-600">₹${s}</b></div>
+                            <div><p class="text-[8px] text-gray-400">EARN</p><b class="text-xs text-green-600">₹${p}</b></div>
+                        </div>
+                    </div>`;
+                });
+                
+                document.getElementById('total-clicks').innerText = tc;
+                document.getElementById('total-sales').innerText = "₹" + ts;
+                document.getElementById('total-profit-stats').innerText = "₹" + tp;
+            });
+        }
+
+        async function handleRegister() {
+            const n = document.getElementById('s-name').value;
+            const e = document.getElementById('s-email').value;
+            const p = document.getElementById('s-pass').value;
+            if(!n || !e || !p) return alert("Details bharein!");
+            try {
+                const res = await auth.createUserWithEmailAndPassword(e, p);
+                await db.collection("users").doc(res.user.uid).set({ name: n, email: e, wallet: 0 });
+                location.reload();
+            } catch (err) { alert(err.message); }
+        }
+
+        async function handleLogin() {
+            const e = document.getElementById('l-email').value;
+            const p = document.getElementById('l-pass').value;
+            try { await auth.signInWithEmailAndPassword(e, p); } catch (err) { alert(err.message); }
+        }
+
+        function requestWithdraw() {
+            const upi = document.getElementById('upi-id').value;
+            if(!upi.includes("@")) return alert("Enter valid UPI!");
+            alert("Withdrawal Request Sent to RAGHVITA ENTERPRISES!");
+        }
+
+        function toggleAuth(t) {
+            document.getElementById('login-box').classList.toggle('hidden', t === 'signup');
+            document.getElementById('signup-box').classList.toggle('hidden', t === 'login');
+        }
+
+        function copyToClipboard() {
+            const el = document.getElementById('f-link'); el.select(); document.execCommand('copy'); alert("Link Copied!");
+        }
+
+        function nav(id, el) {
+            document.querySelectorAll('.tab-page').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            document.getElementById('tab-' + id).classList.remove('hidden');
+            el.classList.add('nav-active');
+        }
+    </script>
+</body>
+</html>
